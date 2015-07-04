@@ -9,9 +9,8 @@ class PyGrabbit:
 
     def __init__(self, url):
         self.url = url
-        self._tree = None
-        self._content = requests.get(url, headers=self.headers).text
-        self._tree = html.fromstring(self._content)
+        content = requests.get(url, headers=self.headers).text
+        self._tree = html.fromstring(content)
 
     @classmethod
     def url(cls, url):
@@ -22,11 +21,11 @@ class PyGrabbit:
         return urljoin(self.url, image_path)
 
     def select(self, *queries):
+        result = set()
         for query in queries:
             node = self._tree.xpath(query)
-            if node:
-                return node
-        return []
+            result.update(node)
+        return list(result)
 
     @cached_attribute
     def title(self):
